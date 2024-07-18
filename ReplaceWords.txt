@@ -1,0 +1,56 @@
+class Solution {
+    class Trie {
+        boolean isEnd;
+        Trie[] children;
+
+        public Trie() {
+            children = new Trie[26];
+        }
+    }
+
+    Trie root;
+
+    public void insert(String word) {
+        Trie curr = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            if (curr.children[ch - 'a'] == null) {
+                curr.children[ch - 'a'] = new Trie();
+            }
+            curr = curr.children[ch - 'a'];
+        }
+        curr.isEnd = true;
+    }
+
+    public String replaceWords(List<String> dictionary, String sentence) {
+        root = new Trie();
+        for (String str : dictionary) {
+            insert(str);
+        }
+
+        StringBuilder res = new StringBuilder();
+        String[] arr = sentence.split(" ");
+        for (int i = 0; i < arr.length; i++) {
+            String s = arr[i];
+            Trie curr = root;
+            StringBuilder repl = new StringBuilder();
+            for (int j = 0; j < s.length(); j++) {
+                char c = s.charAt(j);
+                if (curr.children[c - 'a'] == null)
+                    break;
+                repl.append(c);
+                curr = curr.children[c - 'a'];
+                if (curr.isEnd)
+                    break;
+            }
+            if (curr.isEnd) {
+                res.append(repl.toString());
+            } else {
+                res.append(s);
+            }
+            if (i < arr.length - 1)
+                res.append(" ");
+        }
+        return res.toString();
+    }
+}
